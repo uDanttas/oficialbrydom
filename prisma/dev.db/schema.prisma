@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  cpf       String   @unique
+  senha     String
+  saldo     Float    @default(0)
+  lucroDia  Float    @default(0)
+  tipo      String   // "cliente" ou "mestre"
+  bots      Bot[]
+  historico Historico[]
+}
+
+model Bot {
+  id         Int      @id @default(autoincrement())
+  ativo      Boolean  @default(false)
+  metaBatida Boolean  @default(false)
+  donoId     Int
+  dono       Usuario  @relation(fields: [donoId], references: [id])
+  lucroHoje  Float    @default(0)
+}
+
+model Historico {
+  id        Int      @id @default(autoincrement())
+  botId     Int
+  valor     Float
+  timestamp DateTime @default(now())
+  usuarioId Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+}
